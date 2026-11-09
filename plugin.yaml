@@ -1,0 +1,31 @@
+name: reply-footer
+version: 1.0.0
+description: "Opt-in per-turn reminder appended to the user message (e.g. to keep a required closing block on every reply), with an optional reply check that logs hits and misses. Does nothing until a reminder is configured."
+author: bmcfiv
+license: MIT
+homepage: https://github.com/bmcfiv/hermes-reply-footer
+requires_hermes: ">=0.21"
+provides_hooks:
+  - pre_llm_call
+  - post_llm_call
+config_schema:
+  reminder:
+    type: str
+    default: ""
+    description: "Text added to the context of every user turn. Empty (the default) makes the plugin a no-op."
+  skip_sources:
+    type: list
+    default: [cron, subagent, batch, webhook]
+    description: "Sources that never get the reminder or the check. Matched case-insensitively against the platform name; 'subagent' also matches any delegated child session."
+  check_pattern:
+    type: str
+    default: ""
+    description: "Regular expression a long reply is expected to match (for example a required closing heading). Empty disables the check."
+  min_chars:
+    type: int
+    default: 400
+    description: "Replies shorter than this are not checked."
+  log:
+    type: bool
+    default: false
+    description: "Write one OK/MISS line per checked reply to logs/reply_footer.log under the Hermes home. Needs check_pattern."
